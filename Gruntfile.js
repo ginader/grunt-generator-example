@@ -19,7 +19,7 @@ module.exports = function(grunt) {
       site: {
         files: ['templates/**/*', 'pages/**/*'],
         tasks: 'generator:dev'
-      },
+      }
     },
     connect: {
       dev: {
