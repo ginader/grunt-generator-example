@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     watch: {
       site: {
         files: ['templates/**/*', 'pages/**/*'],
-        tasks: 'generator:build'
+        tasks: 'generator:dev'
       }
     },
     connect: {
