@@ -1,16 +1,20 @@
 /*global module:false*/
 
-var handlebarsHelpers = {
-  'uppercase': function(options) {
-    return options.fn(this).toUpperCase();
-  }
-};
-
+function getHandlebarsHelpers(gruntConfig){
+  return {
+    'uppercase': function(options) {
+      return options.fn(this).toUpperCase();
+    },
+    'versionnumber' : function(options) {
+      return gruntConfig.meta.version;
+    }
+  };
+}
 module.exports = function(grunt) {
   'use strict';
 
   // Project configuration.
-  grunt.initConfig({
+  var config = {
     meta: {
       version: '0.0.1',
       banner: '/*! Copyright (c) Charles Lavery */'
@@ -18,7 +22,7 @@ module.exports = function(grunt) {
     watch: {
       site: {
         files: ['templates/**/*', 'pages/**/*'],
-        tasks: 'generator:dev'
+        tasks: 'generator:build'
       }
     },
     connect: {
@@ -28,27 +32,29 @@ module.exports = function(grunt) {
           base: 'build/'
         }
       }
+    }
+  };
+  config.generator = {
+    dev: {
+      files: [
+        { cwd: 'pages', src: ['**/*'], dest: 'build', ext: '.html' }
+      ],
+      options: {
+        templates: 'templates',
+        development: true,
+        handlebarsHelpers: getHandlebarsHelpers(config)
+      }
     },
-    generator: {
-      dev: {
-        files: [
-          { cwd: 'pages', src: ['**/*'], dest: 'build', ext: '.html' }
-        ],
-        options: {
-          templates: 'templates',
-          development: true,
-          handlebarsHelpers: handlebarsHelpers
-        }
-      },
-      prod: {
-        options: {
-          templates: 'templates',
-          development: false,
-          handlebarsHelpers: handlebarsHelpers
-        }
+    prod: {
+      options: {
+        templates: 'templates',
+        development: false,
+        handlebarsHelpers: getHandlebarsHelpers(config)
       }
     }
-  });
+  };
+
+  grunt.initConfig(config);
 
   grunt.loadNpmTasks( 'grunt-contrib-connect' );
   grunt.loadNpmTasks( 'grunt-contrib-watch' );
